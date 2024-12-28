@@ -24,6 +24,7 @@ class FramelessWindow(QtWidgets.QMainWindow):
         self.settingsButton = None
         self.exitButton = None
         self.setWindowFlags(QtCore.Qt.WindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowStaysOnTopHint))
+        self.is_fullscreen = False  # Track fullscreen state
 
     def addWidgets(self, centralWidget):
         """
@@ -79,6 +80,23 @@ class FramelessWindow(QtWidgets.QMainWindow):
             self.move(self.x() + delta.x(), self.y() + delta.y())
             self.oldPos = event.globalPos()
 
+    def keyPressEvent(self, event):
+        """
+        Toggle fullscreen mode when F11 is pressed.
+        Exit fullscreen when Esc is pressed.
+        """
+        if event.key() == QtCore.Qt.Key_F11:
+            if self.is_fullscreen:
+                self.showNormal()
+                self.is_fullscreen = False
+            else:
+                self.showFullScreen()
+                self.is_fullscreen = True
+        elif event.key() == QtCore.Qt.Key_Escape and self.is_fullscreen:
+            self.showNormal()
+            self.is_fullscreen = False
+        else:
+            super().keyPressEvent(event)
 
 class SettingsPanel(QtWidgets.QWidget):
     """
